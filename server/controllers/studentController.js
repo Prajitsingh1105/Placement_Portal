@@ -1,0 +1,80 @@
+import User from '../models/User.js';
+import ForumQuery from '../models/ForumQuery.js';
+import Job from '../models/Job.js';
+import Application from '../models/Application.js';
+
+// Get Current User Profile (creates if doesn't exist via Clerk Sync)
+export const getProfile = async (req, res) => {
+    try {
+        const { userId } = req.auth; 
+        let user = await User.findOne({ userId });
+        
+        if (!user) {
+            user = await User.create({
+                userId,
+                name: "Student",
+                email: "student@example.com",
+                image: ""
+            });
+        }
+        res.json({ success: true, user });
+    } catch (error) { res.status(500).json({ success: false, message: error.message }); }
+}
+
+// Student Submits a Doubt
+export const submitDoubt = async (req, res) => {
+    try {
+        const { userId } = req.auth;
+        const { query } = req.body;
+        
+        const user = await User.findOne({ userId });
+
+        const newQuery = new ForumQuery({
+            studentId: userId,
+            studentName: user ? user.name : "Student User",
+            query
+        });
+        await newQuery.save();
+        res.json({ success: true, message: "Query submitted to Coordinator portal!" });
+    } catch (error) { res.status(500).json({ success: false, message: error.message }); }
+}
+
+// Get Student's Past Doubts
+export const getMyDoubts = async (req, res) => {
+    try {
+        const { userId } = req.auth;
+        const queries = await ForumQuery.find({ studentId: userId }).sort({ createdAt: -1 });
+        res.json({ success: true, queries });
+    } catch (error) { res.status(500).json({ success: false, message: error.message }); }
+}
+
+// Student Applies to a Job
+export const applyForJob = async (req, res) => {
+    try {
+        const { userId } = req.auth;
+        const { jobId, company, jobTitle, location, name, rollNumber, branch, year, resume } = req.body;
+        
+        // Prevent duplicate applications
+        const exists = await Application.findOne({ userId, jobId });
+        if (exists) return res.status(400).json({ success: false, message: "Already applied!" });
+
+        const app = new Application({
+            userId,
+            name: name || "Student User",
+            rollNumber, branch, year, company, jobTitle, location, resume,
+            date: Date.now(), jobId
+        });
+        await app.save();
+
+        res.json({ success: true, message: "Application submitted securely!" });
+    } catch (error) { res.status(500).json({ success: false, message: error.message }); }
+}
+
+// Get Student's Own Applications
+export const getMyApplications = async (req, res) => {
+    try {
+        const { userId } = req.auth;
+        const applications = await Application.find({ userId }).sort({ date: -1 });
+        res.json({ success: true, applications });
+    } catch (error) { res.status(500).json({ success: false, message: error.message }); }
+}
