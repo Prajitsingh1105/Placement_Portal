@@ -5,7 +5,7 @@ import axios from 'axios'
 export const AppContext= createContext()
 
 export const AppContextProvider=(props)=>{
-    const backendUrl = 'http://localhost:5000'
+    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
     const [searchFilter, setSearchFilter] = useState({
         title: '',

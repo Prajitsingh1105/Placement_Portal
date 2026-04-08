@@ -2,7 +2,7 @@ import express from 'express';
 import { 
     getNotices, createNotice, deleteNotice, 
     getCompanies, updateCompanyTag, createCompany, deleteCompany,
-    getStudents, toggleBlacklist, getStudentRecords, bulkUploadStudentRecords,
+    getStudents, toggleBlacklist, getStudentRecords, bulkUploadStudentRecords, deleteStudentRecord, clearStudentRecords,
     getQueries, resolveQuery, deleteQuery,
     getJobs, createJob, toggleJobVisibility, deleteJob,
     getApplications, updateApplicationStatus,
@@ -31,6 +31,8 @@ router.get('/students', getStudents);
 router.put('/students/:id/blacklist', toggleBlacklist);
 router.get('/student-records', getStudentRecords);
 router.post('/student-records/bulk', bulkUploadStudentRecords);
+router.delete('/student-records/clear', clearStudentRecords);
+router.delete('/student-records/:id', deleteStudentRecord);
 
 // Doubts & Queries
 router.get('/queries', getQueries);

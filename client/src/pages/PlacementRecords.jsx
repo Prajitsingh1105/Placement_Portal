@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FileCheck, Search, Filter, Download, Plus, X, Trash2 } from 'lucide-react'
+import { FileCheck, Search, Filter, Download, Plus, X, Trash2, Eye } from 'lucide-react'
 import moment from 'moment'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -14,6 +14,7 @@ const PlacementRecords = () => {
     const [yearFilter, setYearFilter] = useState('All')
 
     const [showAddModal, setShowAddModal] = useState(false)
+    const [viewLetterUrl, setViewLetterUrl] = useState(null)
     const [newPlacement, setNewPlacement] = useState({ name: '', rollNumber: '', branch: '', year: '', company: '', package: '', letterUrl: '' })
 
     const handleAddPlacement = async (e) => {
@@ -114,21 +115,29 @@ const PlacementRecords = () => {
                     <table className='w-full text-sm text-left whitespace-nowrap'>
                         <thead className='bg-gray-50/80 border-b border-gray-100 text-gray-600 font-medium uppercase tracking-wider text-xs'>
                             <tr>
-                                <th className='py-4 px-6'>Student Details</th>
+                                <th className='py-4 px-6 text-center w-16'>S.No</th>
+                                <th className='py-4 px-6'>Name</th>
+                                <th className='py-4 px-6 text-center'>Roll Number</th>
+                                <th className='py-4 px-6 text-center'>Branch</th>
                                 <th className='py-4 px-6 text-center'>Company</th>
                                 <th className='py-4 px-6 text-center'>Package</th>
-                                <th className='py-4 px-6 text-center'>Date Verified</th>
                                 <th className='py-4 px-6 text-center'>Offer Letter</th>
                             </tr>
                         </thead>
                         <tbody className='divide-y divide-gray-100'>
                             {filteredRecords.map((record, index) => (
                                 <tr key={index} className='hover:bg-blue-50/20 transition-colors'>
+                                    <td className='py-4 px-6 text-center font-medium text-gray-500'>
+                                        {index + 1}
+                                    </td>
                                     <td className='py-4 px-6'>
-                                        <div>
-                                            <p className='font-bold text-gray-800 text-base'>{record.name}</p>
-                                            <p className='text-xs text-gray-500 font-semibold'>{record.rollNumber} • {record.branch} '{record.year}</p>
-                                        </div>
+                                        <p className='font-bold text-gray-800 text-base'>{record.name}</p>
+                                    </td>
+                                    <td className='py-4 px-6 text-center'>
+                                        <span className='text-sm text-gray-600 font-semibold'>{record.rollNumber}</span>
+                                    </td>
+                                    <td className='py-4 px-6 text-center'>
+                                        <span className='text-sm text-gray-600 font-semibold'>{record.branch}</span>
                                     </td>
                                     <td className='py-4 px-6 text-center'>
                                         <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
@@ -139,25 +148,26 @@ const PlacementRecords = () => {
                                         <span className="font-extrabold text-green-600">{record.package}</span>
                                     </td>
                                     <td className='py-4 px-6 text-center'>
-                                        <span className="text-gray-500 font-medium">{moment(record.date).format('MMMM Do YYYY')}</span>
-                                    </td>
-                                    <td className='py-4 px-6 text-center'>
-                                        <div className="flex justify-center">
-                                            <a 
-                                                href={record.letterUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors shadow-sm"
-                                                title="View/Download Offer Letter"
-                                            >
-                                                <Download size={16} />
-                                            </a>
+                                        <div className="flex justify-center items-center gap-3">
                                             <button 
                                                 onClick={() => handleDeletePlacement(record._id)}
-                                                className="w-9 h-9 ml-2 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors shadow-sm"
+                                                className="w-9 h-9 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors shadow-sm"
                                                 title="Delete Record"
                                             >
                                                 <Trash2 size={16} />
+                                            </button>
+                                            <button 
+                                                onClick={() => {
+                                                    if (!record.letterUrl || record.letterUrl === '#') {
+                                                        toast.info("No offer letter link provided for this record.")
+                                                    } else {
+                                                        setViewLetterUrl(record.letterUrl)
+                                                    }
+                                                }}
+                                                className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors shadow-sm"
+                                                title="View Offer Letter"
+                                            >
+                                                <Eye size={16} />
                                             </button>
                                         </div>
                                     </td>
@@ -165,7 +175,7 @@ const PlacementRecords = () => {
                             ))}
                             {filteredRecords.length === 0 && (
                                 <tr>
-                                    <td colSpan="5" className="py-12 text-center text-gray-500 font-medium">
+                                    <td colSpan="7" className="py-12 text-center text-gray-500 font-medium">
                                         No placement records match your filters.
                                     </td>
                                 </tr>
@@ -231,6 +241,25 @@ const PlacementRecords = () => {
 
                                 <button type="submit" className="btn-primary w-full py-3 mt-4 rounded-xl shadow-lg">Save Placement</button>
                             </form>
+                        </motion.div>
+                    </div>
+                )}
+                {viewLetterUrl && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setViewLetterUrl(null)} className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" />
+                        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="glass-panel w-full max-w-5xl h-[85vh] rounded-3xl shadow-2xl relative z-10 p-2 flex flex-col">
+                            <div className="flex justify-between items-center px-4 pt-2 pb-2">
+                                <h3 className="font-bold text-gray-800">Document Viewer</h3>
+                                <div className="flex gap-2">
+                                    <a href={viewLetterUrl} target="_blank" rel="noopener noreferrer" className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-semibold flex items-center gap-2">
+                                        Open Externally
+                                    </a>
+                                    <button onClick={() => setViewLetterUrl(null)} className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg"><X size={20}/></button>
+                                </div>
+                            </div>
+                            <div className="flex-grow rounded-2xl overflow-hidden bg-gray-50/50">
+                                <iframe src={viewLetterUrl} className="w-full h-full border-0" title="Offer Letter" sandbox="allow-same-origin allow-scripts allow-popups" />
+                            </div>
                         </motion.div>
                     </div>
                 )}

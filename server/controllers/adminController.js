@@ -99,10 +99,22 @@ export const bulkUploadStudentRecords = async (req, res) => {
             
         res.json({ success: true, message: "Bulk upload executed" });
     } catch (error) { 
-        // 11000 occurs if insertMany bubbles it completely (ordered: false returns error containing writeErrors, but it might still throw if you await directly)
-        // Actually Mongoose insertMany with ordered: false throws a BulkWriteError which contains insertedDocs. We catch it above.
         res.status(500).json({ success: false, message: "Server error during bulk upload" }); 
     }
+}
+
+export const deleteStudentRecord = async (req, res) => {
+    try {
+        await StudentRecord.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: "Ledger record deleted" });
+    } catch (error) { res.status(500).json({ success: false, message: error.message }); }
+}
+
+export const clearStudentRecords = async (req, res) => {
+    try {
+        await StudentRecord.deleteMany({});
+        res.json({ success: true, message: "Master ledger completely cleared" });
+    } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 }
 
 // --- QUERIES ---
