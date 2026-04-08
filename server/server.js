@@ -8,7 +8,11 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+    origin: "https://campus-portal-self.vercel.app/",
+    credentials: true
+}));
 app.use(express.json({ limit: '50mb' }));
 
 import adminRoutes from './routes/adminRoutes.js';
