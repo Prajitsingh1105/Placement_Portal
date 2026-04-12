@@ -10,8 +10,14 @@ const app = express();
 // Middlewares
 // app.use(cors());
 app.use(cors({
-    origin: ["campus-portal-git-main-ayushi-agarwals-projects-957d4d00.vercel.app", "http://localhost:5173", "http://localhost:5174"],
-    credentials: true
+  origin: [
+    "https://campus-portal-git-main-ayushi-agarwals-projects-957d4d00.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // ✅ ADD THIS
+  credentials: true
 }));
 app.use(express.json({ limit: '50mb' }));
 

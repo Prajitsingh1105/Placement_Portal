@@ -4,7 +4,7 @@ import { useClerk, UserButton, useUser } from '@clerk/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
 import { motion } from 'framer-motion'
-import { BriefcaseBusiness, UserRound, LogIn, HelpCircle } from 'lucide-react'
+import { BriefcaseBusiness, UserRound, LogIn, HelpCircle, FileCheck } from 'lucide-react'
 
 const Navbar = () => {
 
@@ -41,20 +41,51 @@ const Navbar = () => {
 
                 {
                     user
-                        ? <div className='flex items-center gap-4 sm:gap-6'>
-                            <Link to={'/doubts'} className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
-                                <HelpCircle size={16} /> <span className="hidden xl:inline">Doubts Forum</span>
+                        ? <div className="flex items-center gap-3 sm:gap-5">
+                            <Link
+                                to={'/doubts'}
+                                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+                            >
+                                <HelpCircle size={16} />
+                                <span className="hidden xl:inline">Doubts Forum</span>
                             </Link>
-                            <div className="w-px h-4 bg-gray-300 hidden sm:block"></div>
-                            <Link to={'/applications'} className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
-                                <BriefcaseBusiness size={16} /> <span className="hidden sm:inline">Applied Jobs</span>
+
+                            <div className="hidden sm:block w-px h-4 bg-gray-300"></div>
+
+                            <Link
+                                to={'/applications'}
+                                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+                            >
+                                <BriefcaseBusiness size={16} />
+                                <span className="hidden sm:inline">Applied Jobs</span>
                             </Link>
-                            <div className="w-px h-4 bg-gray-300"></div>
-                            <Link to={'/profile'} className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
-                                <UserRound size={16} /> <span className="hidden sm:inline">Profile</span>
+
+                            <div className="hidden sm:block w-px h-4 bg-gray-300"></div>
+
+                            <Link
+                                to={'/placement-details'}
+                                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+                            >
+                                <FileCheck size={16} />
+                                <span className="hidden sm:inline">Placement Details</span>
                             </Link>
-                            <div className="w-px h-4 bg-gray-300 absolute -left-[9999px] hidden"></div>
-                            <p className='max-sm:hidden text-sm font-medium text-gray-800'>Hi, {user.firstName}</p>
+
+                            <div className="hidden sm:block w-px h-4 bg-gray-300"></div>
+
+                            <Link
+                                to={'/profile'}
+                                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+                            >
+                                <UserRound size={16} />
+                                <span className="hidden sm:inline">Profile</span>
+                            </Link>
+
+                            <div className="hidden sm:block w-px h-4 bg-gray-300"></div>
+
+                            <p className="hidden lg:block text-sm font-medium text-gray-800">
+                                Hi, {user.firstName}
+                            </p>
+
                             <UserButton afterSignOutUrl="/" />
                         </div>
                         :
